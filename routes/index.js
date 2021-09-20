@@ -7,9 +7,10 @@ const profileRoutes = require('./profileRoutes.js');
 const taskRoutes = require('./taskRoutes.js');
 const schoolRoutes = require('./schoolRoutes.js');
 const authRoutes = require('./authRoutes.js');
+const authMiddleware = require('../middlewares/authMiddleware.js');
 
 router.use('/task', taskRoutes);
-router.use('/user', userRoutes);
+router.use('/user', authMiddleware, userRoutes);
 router.use('/profile', profileRoutes);
 router.use('/', authRoutes);
 router.use('/lesson', lessonRoutes);
