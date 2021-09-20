@@ -11,6 +11,7 @@ router.post(
 );
 
 router.post('/login', UserController.login);
+router.get('/activate/:link', UserController.activate);
 router.get('/refresh', UserController.refresh);
 
 module.exports = router;

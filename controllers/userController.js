@@ -29,6 +29,16 @@ class UserController {
     }
   };
 
+  static activate = async (req, res, next) => {
+    try {
+      const { link } = req.params;
+      await UserService.activate(link);
+      return res.redirect(`https://www.google.com`);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   static refresh = async (req, res, next) => {
     try {
       const { refresh_token } = req.headers;
@@ -52,14 +62,15 @@ class UserController {
   static getOne = async (req, res, next) => {
     try {
       const { id } = req.params;
+      const { user } = req;
 
-      if (id != req.user.id) {
+      if (id != user.id || user.role !== 'teacher') {
         return next(ErrorHandler.ForbiddenError('Not allowed'));
       }
 
-      const user = await UserService.getOne(id);
+      const userData = await UserService.getOne(id);
 
-      return res.json(user);
+      return res.json(userData);
     } catch (error) {
       next(error);
     }
@@ -68,7 +79,12 @@ class UserController {
   static update = async (req, res, next) => {
     try {
       const { id } = req.params;
+      const { user } = req;
       const { role, schoolId } = req.body;
+
+      if (id != user.id || user.role !== 'teacher') {
+        return next(ErrorHandler.ForbiddenError('Not allowed'));
+      }
 
       const updateData = {
         id,

@@ -2,17 +2,21 @@ const { User } = require('./../models/index.js');
 const bcrypt = require('bcrypt');
 const ErrorHandler = require('../utils/ErrorHandler.js');
 const TokenService = require('./tokenService.js');
+const MailService = require('./mailService.js');
+const { v4: uuidv4 } = require('uuid');
 
 class UserService {
-  static registration = async (email, password, role) => {
+  static registration = async (email, password, role = 'student') => {
     const oldUser = await User.findOne({ where: { email } });
     if (oldUser) {
       throw ErrorHandler.BadRequest('Пользователь с таким email уже существует');
     }
 
     const hashedPassword = await bcrypt.hash(password, 3);
+    const activationLink = uuidv4();
+    const user = await User.create({ email, password: hashedPassword, role, activationLink });
 
-    const user = await User.create({ email, password: hashedPassword, role });
+    await MailService.sendActivation(email, `${process.env.API}/api/v1/activate/${activationLink}`);
     const tokens = TokenService.generateTokens({ id: user.id, email, role });
     return {
       ...tokens,
@@ -45,6 +49,16 @@ class UserService {
         role: user.role,
       },
     };
+  };
+
+  static activate = async (link) => {
+    const user = await User.findOne({ where: { activationLink: link } });
+    if (!user) {
+      throw ErrorHandler.BadRequest('Activation link is incorrect');
+    }
+
+    user.isActivated = true;
+    await user.save();
   };
 
   static refresh = async (token) => {

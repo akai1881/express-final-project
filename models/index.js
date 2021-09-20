@@ -6,6 +6,8 @@ const User = sequelize.define('user', {
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   password: { type: DataTypes.STRING, allowNull: false },
   role: { type: DataTypes.STRING, defaultValue: 'student' },
+  isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
+  activationLink: { type: DataTypes.STRING },
 });
 
 const Profile = sequelize.define('profile', {
@@ -46,8 +48,8 @@ Profile.belongsTo(User);
 School.hasMany(User);
 User.belongsTo(School);
 
-Lesson.belongsToMany(User, { through: 'lesson_user' });
-User.belongsToMany(Lesson, { through: 'lesson_user' });
+Lesson.belongsToMany(User, { through: 'lesson_user', foreignKey: 'lessonId', otherKey: 'teacherId' });
+User.belongsToMany(Lesson, { through: 'lesson_user', foreignKey: 'teacherId', otherKey: 'lessonId' });
 
 Lesson.hasMany(Task);
 Task.belongsTo(Lesson);

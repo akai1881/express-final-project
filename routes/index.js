@@ -8,6 +8,7 @@ const taskRoutes = require('./taskRoutes.js');
 const schoolRoutes = require('./schoolRoutes.js');
 const authRoutes = require('./authRoutes.js');
 const authMiddleware = require('../middlewares/authMiddleware.js');
+const checkRole = require('../middlewares/checkRoles.js');
 
 router.use('/task', taskRoutes);
 router.use('/user', authMiddleware, userRoutes);
