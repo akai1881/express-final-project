@@ -5,7 +5,7 @@ const User = sequelize.define('user', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   password: { type: DataTypes.STRING, allowNull: false },
-  role: { type: DataTypes.STRING, defaultValue: 'student' },
+  role: { type: DataTypes.STRING, defaultValue: 'teacher' },
   isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
   activationLink: { type: DataTypes.STRING },
 });
@@ -42,14 +42,17 @@ const Task = sequelize.define('task', {
   type: { type: DataTypes.STRING },
 });
 
+const Lesson_user = sequelize.define('lesson_user', {}, { timestamps: false });
+
 User.hasOne(Profile);
 Profile.belongsTo(User);
 
 School.hasMany(User);
 User.belongsTo(School);
 
-Lesson.belongsToMany(User, { through: 'lesson_user', foreignKey: 'lessonId', otherKey: 'teacherId' });
-User.belongsToMany(Lesson, { through: 'lesson_user', foreignKey: 'teacherId', otherKey: 'lessonId' });
+// Lesson.belongsToMany(User, { through: Lesson_user, as: 'StudentLesson', foreignKey: 'studentId' });
+Lesson.belongsToMany(User, { through: Lesson_user, as: 'TeacherLesson', foreignKey: 'userId' });
+User.belongsToMany(Lesson, { through: Lesson_user, foreignKey: 'lessonId' });
 
 Lesson.hasMany(Task);
 Task.belongsTo(Lesson);
@@ -59,5 +62,6 @@ module.exports = {
   Profile,
   Lesson,
   Task,
+  Lesson_user,
   School,
 };

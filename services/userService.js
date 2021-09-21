@@ -1,4 +1,4 @@
-const { User } = require('./../models/index.js');
+const { User, Profile, Lesson } = require('./../models/index.js');
 const bcrypt = require('bcrypt');
 const ErrorHandler = require('../utils/ErrorHandler.js');
 const TokenService = require('./tokenService.js');
@@ -79,7 +79,6 @@ class UserService {
     }
 
     const tokens = TokenService.generateTokens({ id: user.id, email: user.email, role: user.role });
-
     return {
       ...tokens,
       user: {
@@ -101,7 +100,13 @@ class UserService {
   };
 
   static getOne = async (id) => {
-    const user = await User.findOne({ where: { id } });
+    const user = await User.findOne({
+      where: { id },
+      include: [
+        { model: Profile, as: 'profile' },
+        { model: Lesson, as: 'lessons' },
+      ],
+    });
 
     if (!user) throw ErrorHandler.BadRequest('User not found');
 

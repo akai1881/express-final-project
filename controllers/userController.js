@@ -64,9 +64,9 @@ class UserController {
       const { id } = req.params;
       const { user } = req;
 
-      if (id != user.id || user.role !== 'teacher') {
-        return next(ErrorHandler.ForbiddenError('Not allowed'));
-      }
+      // if (id != user.id || user.role !== 'teacher') {
+      //   return next(ErrorHandler.ForbiddenError('Not allowed'));
+      // }
 
       const userData = await UserService.getOne(id);
 

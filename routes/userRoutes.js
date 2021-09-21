@@ -5,7 +5,7 @@ const checkRole = require('../middlewares/checkRoles');
 
 const router = express.Router();
 
-router.get('/', checkRole('teacher'), UserController.getAll);
+router.get('/', UserController.getAll);
 router.get('/:id', UserController.getOne);
 router.patch('/:id', checkRole('teacher', 'student'), UserController.update);
 
