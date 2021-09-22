@@ -42,7 +42,22 @@ const Task = sequelize.define('task', {
   type: { type: DataTypes.STRING },
 });
 
-const Lesson_user = sequelize.define('lesson_user', {}, { timestamps: false });
+const Lesson_user = sequelize.define('Lesson_user', {
+  lessonId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Lesson,
+      key: 'id',
+    },
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: 'id',
+    },
+  },
+});
 
 User.hasOne(Profile);
 Profile.belongsTo(User);
@@ -50,18 +65,21 @@ Profile.belongsTo(User);
 School.hasMany(User);
 User.belongsTo(School);
 
-// Lesson.belongsToMany(User, { through: Lesson_user, as: 'StudentLesson', foreignKey: 'studentId' });
-Lesson.belongsToMany(User, { through: Lesson_user, as: 'TeacherLesson', foreignKey: 'userId' });
-User.belongsToMany(Lesson, { through: Lesson_user, foreignKey: 'lessonId' });
+// Lesson.belongsToMany(User, { through: Lesson_user, as: 'StudentLesson', foreignKey: 'stude, as: 'studentId', foreignKey: 'studentId' });
+Lesson.belongsToMany(User, { through: Lesson_user });
+User.belongsToMany(Lesson, { through: Lesson_user });
 
 Lesson.hasMany(Task);
 Task.belongsTo(Lesson);
+
+User.hasMany(Task);
+Task.belongsTo(User);
 
 module.exports = {
   User,
   Profile,
   Lesson,
-  Task,
   Lesson_user,
+  Task,
   School,
 };

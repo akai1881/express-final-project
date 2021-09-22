@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 class UserService {
   static registration = async (email, password, role = 'student') => {
     const oldUser = await User.findOne({ where: { email } });
+
     if (oldUser) {
       throw ErrorHandler.BadRequest('Пользователь с таким email уже существует');
     }
@@ -18,6 +19,7 @@ class UserService {
 
     await MailService.sendActivation(email, `${process.env.API}/api/v1/activate/${activationLink}`);
     const tokens = TokenService.generateTokens({ id: user.id, email, role });
+
     return {
       ...tokens,
       user: {
@@ -29,13 +31,14 @@ class UserService {
   };
 
   static login = async (email, password) => {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email }, include: { model: Profile } });
 
     if (!user) {
       throw ErrorHandler.BadRequest('Wrong email or password');
     }
 
     const comparePassword = await bcrypt.compare(password, user.password);
+
     if (!comparePassword) {
       throw ErrorHandler.BadRequest('Wrong email or password');
     }
