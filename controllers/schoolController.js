@@ -27,6 +27,18 @@ class SchoolController {
       next(error);
     }
   };
+
+  static delete = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      await SchoolService.delete(id);
+
+      return res.json({ message: 'deleted' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 module.exports = SchoolController;
