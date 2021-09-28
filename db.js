@@ -8,7 +8,7 @@ if (process.env.DATABASE_URL) {
     sequelize = new Sequelize(process.env.DATABASE_URL, {
         dialect: 'postgres',
         protocol: 'postgres',
-        logging: true, //false
+        logging: false, //false
     });
 } else {
     sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
