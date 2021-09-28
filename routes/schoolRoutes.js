@@ -110,6 +110,7 @@ router.get('/:id');
  *              schema:
  *                $ref: '#/components/schemas/School'
  */
+
 router.post('/', SchoolController.create);
 
 /**
@@ -139,6 +140,7 @@ router.post('/', SchoolController.create);
  *        404:
  *          description: School not found
  */
+
 router.delete('/:id');
 
 /**
