@@ -44,7 +44,7 @@ app.use(express.json());
 app.use(formidableMiddleware());
 app.use(express.static(path.resolve('public')));
 app.use(fileUpload({}));
-// app.use(morgan('tiny'));
+app.use(morgan('tiny'));
 
 app.use(adminBro.options.rootPath, router);
 app.use('/api/v1', routes);
